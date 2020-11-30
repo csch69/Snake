@@ -1,257 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Bird</title>
+  <title>Basic Snake HTML Game</title>
+  <meta charset="UTF-8">
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas {
+    border: 1px solid white;
+  }
+  </style>
 </head>
-<body id="bodyEl" style="margin:0 ; padding: 0; border: 0; overflow: hidden;">
-    <canvas id="canvasEl" style="padding: 0; border: 0; margin: 0; "></canvas>
-    <script>
-         class obstacle{
-            constructor(posX){
-                //obstacle variables
-                this.owidth= 120; //the width of the obstacles
-                this.dbo =100;  //distant betwenn the obstacles
-                this.oroom = 130; //distant between the upper and lower obstacle
-                this.posY = this.getRandomArbitrary(this.oroom,(canvas.height-this.oroom));//Math.floor(Math.random() * (canvas.height-this.oroom));
-                this.mStepp = 5;
-                this.posX = posX ;
-            }
-            getRandomArbitrary(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+<body>
+<canvas width="400" height="400" id="game"></canvas>
+<script>
+var canvas = document.getElementById('game');
+var context = canvas.getContext('2d');
 
-            colorRect(topx, topy, length, height, color) {
-                canvasContext.fillStyle = color;
-                canvasContext.fillRect(topx, topy, length, height);
-            }
-        
-            drawObstacle()
-            {
-                //obstacle upside
-                colorRect(this.posX,0,this.owidth,this.posY,"#7DB46C");
-                //obstacle downside
-                colorRect(this.posX,canvas.height,this.owidth,-canvas.height+this.posY+this.oroom,"#7DB46C");
-            }
+var grid = 16;
+var count = 0;
 
-            move(){
-                this.posX -= this.mStepp;
-            }
+var snake = {
+  x: 160,
+  y: 160,
 
-            movedraw(){
-                this.move();
-                this.drawObstacle();
-            }
+  // snake velocity. moves one grid length every frame in either the x or y direction
+  dx: grid,
+  dy: 0,
 
-            posUP()
-            {
-                return this.posY;
-            }
-            posDOWN()
-            {
-                return this.posY+this.oroom;
-            }
-        }
-        
-        //Varaibles
-        var framesperSecound =50;
-        var punkteStand=0;
-        //canvas Element
-        var canvas = document.getElementById("canvasEl");
-        var canvasContext = canvas.getContext("2d");
-        
-        //Game Figure
-        var fwidth = 40;
-        var fheight = 40;
-        
-        var fyPos = ( window.innerHeight/2-fheight/2);
-        var fxPos = window.innerWidth/2-fwidth/2;
-        let obstaclesList = [];
+  // keep track of all grids the snake body occupies
+  cells: [],
+
+  // length of the snake. grows when eating an apple
+  maxCells: 4
+};
 
 
-        //Highscore
-        var highscore = getHighscore(); 
-        
-        var flimmern =0;
-       
-       
-        //interval function
-        setInterval(
-        
-            function()
-            {
-               
-                drawEverything();
-               
-            },1000/framesperSecound
-        );
-        
-        //EventListeners
-        //onkeydown = moveFigure;
-        onmousedown= moveFigure; //Steuerung mit Mausklick
-        
-        //Methods for Drawing
-        function drawEverything()
-        {
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
 
-             //background 
-             colorRect(0, 0, canvas.width, canvas.height, "#D1EDF2");
+var apple = {
+  x: 320,
+  y: 320
+};
 
-            //logo 
-            logo("#38ACEC");
-             //Player
-             fyPos+=4; //bigger than heigth the bird dies
-             colorRect(canvas.width/2-fwidth/2,fyPos,fwidth,fheight,"#FFF5A6")
-             
-             //obstacles
-             obstacleHandler();
-            
-            //Scoreboard
-            canvasContext.font="30px Arial";
-            canvasContext.textAlign  = "center";
-            canvasContext.fillText("Score "+punkteStand,canvas.width/2, canvas.height/6);
-            //Highscore
-            canvasContext.font="30px Arial";
-            canvasContext.textAlign  = "center";
-            canvasContext.fillText("Highscore "+getHighscore(),canvas.width/2, canvas.height/4);
-            //refrehses the variable
-            fxPos = window.innerWidth/2-fwidth/2;
-            if(iscrashed()){
-                restart();
-            }
-        
 
-        }
+// get random whole numbers in a specific range
+// @see https://stackoverflow.com/a/1527820/2124254
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
-        //Erzeugt die hindernisse
-        function obstacleHandler()
-        {   
-            
-            if (obstaclesList.length == 0) {
-               
-                obstaclesList.push(new obstacle(canvas.width));
-                obstaclesList[0].movedraw();        
-            }
-            else if (obstaclesList[obstaclesList.length-1].posX < canvas.width/2.5)
-            {
-                obstaclesList.push(new obstacle(canvas.width));
-                obstaclesList.forEach(element => element.movedraw());
-                punkteStand +=1;
-            }
-            else{
-                obstaclesList.forEach(element => element.movedraw());
-            }
-            if (obstaclesList[0].posX <30) {
-                obstaclesList.shift();
-                
-            }
-           
+// game loop
+function loop() {
+    requestAnimationFrame(loop);
 
-        }
+  // slow game loop to 15 fps instead of 60 (60/15 = 4)
+  if (++count < 4) {
+    return;
+  }
 
-        //Draws a colored rectangle
-        function colorRect(topx, topy, length, height, color) {
-            canvasContext.fillStyle = color;
-            canvasContext.fillRect(topx, topy, length, height);
-        }
-        
-        //is flappy crashed
-        function iscrashed()
-        {
-            
-            if (fyPos>canvas.height) {
-                return true;
-            }
-            if(obstaclesList[0].posX <= fxPos+fwidth/2 && obstaclesList[0].posX +obstaclesList[0].owidth >=fxPos)
-            {
-                console.log()
-                if(obstaclesList[0].posDOWN() <= fyPos+ fheight || obstaclesList[0].posUP() >= fyPos ){
-                    return true;
-                }
-                else{
-                    return false;
-                }
-            }
-            else{
-                return false;
-            }
-        }
-       
-        //Restart
-        function restart(){
-            setHighscore(punkteStand);
-            punkteStand =0;
-            fyPos = canvas.height/2;
-            obstaclesList = [];
-        }
-        
-        //Methods for Moving
-            //For moving with arrow keys 
-        //  function moveFigure(evt)
-        // {
-        //     if (evt.keyCode == 38) {
-        //         fyPos -=60;
-        //     }
-                
-        // }
-        function moveFigure(evt)
-        {     
-                fyPos -=70;
+  count = 0;
+  context.clearRect(0,0,canvas.width,canvas.height);
 
-        }
+  // move snake by it's velocity
+  snake.x += snake.dx;
+  snake.y += snake.dy;
 
-        //Highscore functions
-        function getHighscore(){
-            
-            if((score =localStorage.getItem('fpscore') )== null)
-            {
-                localStorage.setItem('fpscore','0') 
-                return 0;  
-            }else
-            {
-                return score;
-            }
-        }
+  // wrap snake position horizontally on edge of screen
+  if (snake.x < 0) {
+    snake.x = canvas.width - grid;
+  }
+  else if (snake.x >= canvas.width) {
+    snake.x = 0;
+  }
 
-        function setHighscore(score)
-        {
-            
-            if((localStorage.getItem('fpscore') )== null)
-            {
-                localStorage.setItem('fpscore',score) 
-            }
-            else if(score>highscore)
-            {
-                localStorage.removeItem('fpscore');
-                localStorage.setItem('fpscore', score);
-            }
-        }
+  // wrap snake position vertically on edge of screen
+  if (snake.y < 0) {
+    snake.y = canvas.height - grid;
+  }
+  else if (snake.y >= canvas.height) {
+    snake.y = 0;
+  }
 
-        //Logo 
-        function logo(color){
-                    canvasContext.font = "100px ComicSans";
-                    canvasContext.fillStyle = color;
-                    canvasContext.textAlign  = "center"
-                    canvasContext.fillText("C.S. DESIGN", canvas.width/2,canvas.height/2 );
-                // const dauer = 10;
-                // if(flimmern <=dauer && flimmern>=0)
-                // {
-                //     canvasContext.font = "100px ComicSans";
-                //     canvasContext.fillStyle = color;
-                //     canvasContext.textAlign  = "center"
-                //     canvasContext.fillText("C.S. DESIGN", canvas.width/2,canvas.height/2 );
-                //     flimmern++;
-                // }
-                // else if (flimmern==dauer+1){
-                //     flimmern = -dauer;
-                // }
-                // else{
-                //     flimmern++;
-                // }   
-        }
-    </script>
+  // keep track of where snake has been. front of the array is always the head
+  snake.cells.unshift({x: snake.x, y: snake.y});
+
+  // remove cells as we move away from them
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  // draw apple
+  context.fillStyle = 'red';
+  context.fillRect(apple.x, apple.y, grid-1, grid-1);
+
+  // draw snake one cell at a time
+  context.fillStyle = 'green';
+  snake.cells.forEach(function(cell, index) {
+
+    // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
+    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+
+    // snake ate apple
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+
+      // canvas is 400x400 which is 25x25 grids
+      apple.x = getRandomInt(0, 25) * grid;
+      apple.y = getRandomInt(0, 25) * grid;
+    }
+
+    // check collision with all cells after this one (modified bubble sort)
+    for (var i = index + 1; i < snake.cells.length; i++) {
+
+      // snake occupies same space as a body part. reset game
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        snake.x = 160;
+        snake.y = 160;
+        snake.cells = [];
+        snake.maxCells = 4;
+        snake.dx = grid;
+        snake.dy = 0;
+
+        apple.x = getRandomInt(0, 25) * grid;
+        apple.y = getRandomInt(0, 25) * grid;
+      }
+    }
+  });
+}
+
+// listen to keyboard events to move the snake
+document.addEventListener('keydown', function(e) {
+  // prevent snake from backtracking on itself by checking that it's
+  // not already moving on the same axis (pressing left while moving
+  // left won't do anything, and pressing right while moving left
+  // shouldn't let you collide with your own body)
+
+  // left arrow key
+  if (e.which === 37 && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  // up arrow key
+  else if (e.which === 38 && snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+  // right arrow key
+  else if (e.which === 39 && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  // down arrow key
+  else if (e.which === 40 && snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+// start the game
+requestAnimationFrame(loop);
+</script>
 </body>
 </html>
