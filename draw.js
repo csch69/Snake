@@ -2,16 +2,19 @@ const canvas = document.getElementById('game');
 const context = canvas.getContext("2d");
 const grid = 20;
 
-var background = new Image();
-background.src = 'images/grass.jpg';
-context.drawImage(background, 0, 0, canvas.width, canvas.height);
-console.log(background);
+var obstacles = new Array(15);
+var snack_theme = 'ball';
+var obstacle_theme = 'goal';
 
 (function setup() {
     snake1 = new Snake(1, 'red');
-    snake2 = new Snake(2, 'black');
-    snack = new Snack();
-    obstacle = new Obstacle();
+    snake2 = new Snake(2, 'yellow');
+
+    snack = new Snack(snack_theme);
+
+    for(var i=0; i<obstacles.length; ++i){
+        obstacles[i] = new Obstacle(obstacle_theme);
+    }
 
     window.setInterval(() => {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -20,19 +23,22 @@ console.log(background);
 
         snake1.draw();
         snake2.draw();
-
         snack.draw();
-        obstacle.draw();
-        obstacle.draw();
+
+        for(var i=0; i<obstacles.length; i++){
+            obstacles[i].draw();
+        }
 
         if (snake1.eat(snack) || snake2.eat(snack)) {
-            snack.newLocation();
+            snack.newLocation(obstacles);
         }
 
-        if (snake1.hit(obstacle) || snake2.hit(obstacle)) {
-            snake1.resetGame();
-        }
-    }, 75)
+        obstacles.forEach(element => {
+            if(snake1.hit(element) || snake2.hit(element)){
+                //snake1.resetGame();
+            }
+        });
+    }, 65)
 }());
 
 window.addEventListener('keydown', ((event) => {
