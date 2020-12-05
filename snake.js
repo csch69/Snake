@@ -1,6 +1,6 @@
 function Snake(player, color){
-    this.x  = getRandomInt(0, 40) * grid;
-    this.y  = getRandomInt(0, 40) * grid;
+    this.x  = getRandomInt(5, 35) * grid;
+    this.y  = getRandomInt(5, 35) * grid;
     this.dx = grid;
     this.dy = 0;
     this.cells = [];
@@ -22,46 +22,68 @@ function Snake(player, color){
     }
 
     this.update = function(){
-        this.x += this.dx;
-        this.y += this.dy;
+        if(!this.dead){
+            this.x += this.dx;
+            this.y += this.dy;
 
-        if(this.x < 0) {
-            this.x = canvas.width - grid;
-        }
-        else if(this.x >= canvas.width) {
-            this.x = 0;
-        }
-
-        if(this.y < 0) {
-            this.y = canvas.height - grid;
-        }
-        else if(this.y >= canvas.height) {
-            this.y = 0;
-        }
-
-        this.cells.unshift({x: this.x, y: this.y});
-
-        if(this.cells.length > this.maxCells) {
-            this.cells.pop();
-        }
-
-        this.cells.forEach(function(cell, index) {
-            for (var i = index+1; i < snake1.cells.length; i++) {
-                if(cell.x === snake1.cells[i].x && cell.y == snake1.cells[i].y) {
-                    snake1.resetGame();
-                }
+            if(this.x < 0) {
+                this.x = canvas.width - grid;
+            }
+            else if(this.x >= canvas.width) {
+                this.x = 0;
             }
 
-            for (var i = index+1; i < snake2.cells.length; i++) {
-                if(cell.x === snake2.cells[i].x && cell.y == snake2.cells[i].y) {
-                    snake2.resetGame();
-                }
+            if(this.y < 0) {
+                this.y = canvas.height - grid;
             }
-        });
+            else if(this.y >= canvas.height) {
+                this.y = 0;
+            }
+
+            this.cells.unshift({x: this.x, y: this.y});
+
+            if(this.cells.length > this.maxCells) {
+                this.cells.pop();
+            }
+
+            this.cells.forEach(function(cell, index) {
+                for (var i=index+1; i<snake1.cells.length; i++) {
+                    if(cell.x === snake1.cells[i].x && cell.y == snake1.cells[i].y) {
+                        snake1.dead = true;
+                    }
+                }
+
+                for (var i=index+1; i<snake2.cells.length; i++) {
+                    if(cell.x === snake2.cells[i].x && cell.y == snake2.cells[i].y) {
+                        snake2.dead = true;
+                    }
+                }
+            });
+
+            snake1.cells.forEach(function(cell, index) {
+                neues_x = cell.x;
+                neues_y = cell.y;
+                    snake2.cells.forEach(function(cell, index) {
+                        if(index == 0 && neues_x == cell.x && neues_y == cell.y){
+                            snake2.dead = true;
+                        }
+                    });
+            });
+
+            snake2.cells.forEach(function(cell, index) {
+                neues_x = cell.x;
+                neues_y = cell.y;
+                    snake1.cells.forEach(function(cell, index) {
+                        if(index == 0 && neues_x == cell.x && neues_y == cell.y){
+                            snake1.dead = true;
+                        }
+                    });
+            });
+        }
     }
 
     this.changeDirection = function(direction){
-        if(player == 1){
+        if(player == 1 && this.dead == false){
             if(direction == 'Left' && this.dx == 0) {
                 this.dx = -grid;
                 this.dy = 0;
@@ -83,7 +105,7 @@ function Snake(player, color){
                 this.direction = 'unten';
             }
         }
-        else if(player == 2){
+        else if(player == 2 && this.dead == false){
             if(direction == 'a' && this.dx == 0) {
                 this.dx = -grid;
                 this.dy = 0; 
@@ -115,45 +137,16 @@ function Snake(player, color){
         return false;
     }
 
-    this.hit = function(obstacle){
-        this.dead = true;
-        return (
-            (this.x == obstacle.x && this.y == obstacle.y) || 
-            (this.x == obstacle.x + grid && this.y == obstacle.y) || 
-            (this.x == obstacle.x && this.y == obstacle.y + grid) || 
-            (this.x == obstacle.x + grid && this.y == obstacle.y + grid)) ? true : false;
+    this.hitObstacle = function(obstacle){
+        if((this.x == obstacle.x && this.y == obstacle.y) || 
+           (this.x == obstacle.x + grid && this.y == obstacle.y) || 
+           (this.x == obstacle.x && this.y == obstacle.y + grid) || 
+           (this.x == obstacle.x + grid && this.y == obstacle.y + grid)){
+               this.dead = true;
+           }
     }
 
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    this.resetGame = function(){
-        if(snake1.dead == true && snake2.dead == true){
-            snake1.x = getRandomInt(0, 25) * grid;
-            snake1.y = getRandomInt(0, 25) * grid;
-            snake1.cells = [];
-            snake1.maxCells = 4;
-            snake1.dx = grid;
-            snake1.dy = 0;
-            snake1.direction = 'rechts';
-            snake1.dead = false;
-
-            snake2.x = getRandomInt(0, 25) * grid;
-            snake2.y = getRandomInt(0, 25) * grid;
-            snake2.cells = [];
-            snake2.maxCells = 4;
-            snake2.dx = grid;
-            snake2.dy = 0;
-            snake2.direction = 'rechts';
-            snake2.dead = false;
-
-            snack.x = getRandomInt(0, 25) * grid;
-            snack.y = getRandomInt(0, 25) * grid;
-
-            obstacles.forEach(element => {
-                element.newLocation();
-            });
-        }
     }
 }
