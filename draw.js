@@ -10,7 +10,7 @@ for(let j=20; j<800; j+=20){
 }
 
 var obstacles = [];
-for(var i=0; i<20; ++i){
+for(var i=0; i<40; ++i){
     obstacles[i] = new Obstacle('goal');
 }
 var snack = new Snack('ball');
@@ -20,6 +20,11 @@ var snake2 = new Snake(2, 'yellow');
 snake1.checkSpawnOnObstacle();
 snake2.checkSpawnOnObstacle();
 snack.checkSpawnOnObstacle();
+
+var timer = 0;
+setInterval(() => {
+    if(timer < obstacles.length) timer++;
+},2500);
 
 (function setup() {
     window.setInterval(() => {
@@ -31,17 +36,18 @@ snack.checkSpawnOnObstacle();
         snake2.draw();
         snack.draw();
 
-        for(var i=0; i<obstacles.length; i++){
+        for(var i=0; i<timer; i++){
             obstacles[i].draw();
+            obstacles[i].markAsSpawned();
         }
 
         if (snake1.eat(snack) || snake2.eat(snack)) {
             snack.newLocation();
         }
 
-        obstacles.forEach(element => {
-            snake1.hitObstacle(element);
-            snake2.hitObstacle(element);
+        obstacles.forEach(obstacle => {
+            snake1.hitObstacle(obstacle);
+            snake2.hitObstacle(obstacle);
         });
 
         if(snake1.dead == true && snake2.dead == true){

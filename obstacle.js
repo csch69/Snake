@@ -1,6 +1,7 @@
 function Obstacle(theme) {
     this.x  = getRandomInt(1, 39) * grid;
     this.y  = getRandomInt(1, 39) * grid;
+    this.spawned = false;
 
     this.draw = function(){
         img = new Image();
@@ -11,6 +12,10 @@ function Obstacle(theme) {
     this.newLocation = function(){
         this.x  = getRandomInt(1, 39) * grid;
         this.y  = getRandomInt(1, 39) * grid;
+    }
+
+    this.markAsSpawned = function(){
+        this.spawned = true;
     }
 
     function getRandomInt(min, max) {

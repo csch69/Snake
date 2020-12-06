@@ -128,12 +128,14 @@ function Snake(player, color){
     }
 
     this.hitObstacle = function(obstacle){
-        if((this.x == obstacle.x && this.y == obstacle.y) || 
-           (this.x == obstacle.x + grid && this.y == obstacle.y) || 
-           (this.x == obstacle.x && this.y == obstacle.y + grid) || 
-           (this.x == obstacle.x + grid && this.y == obstacle.y + grid)){
-               this.dead = true;
-           }
+        if(obstacle.spawned == true){
+            if((this.x == obstacle.x && this.y == obstacle.y) || 
+                (this.x == obstacle.x + grid && this.y == obstacle.y) || 
+                (this.x == obstacle.x && this.y == obstacle.y + grid) || 
+                (this.x == obstacle.x + grid && this.y == obstacle.y + grid)){
+                    this.dead = true;
+            }
+        }
     }
 
     this.checkSpawnOnObstacle = function(){
