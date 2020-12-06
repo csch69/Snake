@@ -2,20 +2,26 @@ const canvas = document.getElementById('game');
 const context = canvas.getContext("2d");
 const grid = 20;
 
-var obstacles = new Array(12);
-var snack_theme = 'ball';
-var obstacle_theme = 'goal';
+var all_coordinates = [];
+for(let j=20; j<800; j+=20){
+    for(let k=20; k<800; k+=20){
+        all_coordinates.push([j,k]);
+    }
+}
+
+var obstacles = [];
+for(var i=0; i<20; ++i){
+    obstacles[i] = new Obstacle('goal');
+}
+var snack = new Snack('ball');
+var snake1 = new Snake(1, 'red');
+var snake2 = new Snake(2, 'yellow');
+
+snake1.checkSpawnOnObstacle();
+snake2.checkSpawnOnObstacle();
+snack.checkSpawnOnObstacle();
 
 (function setup() {
-    snake1 = new Snake(1, 'red');
-    snake2 = new Snake(2, 'yellow');
-
-    snack = new Snack(snack_theme);
-
-    for(var i=0; i<obstacles.length; ++i){
-        obstacles[i] = new Obstacle(obstacle_theme);
-    }
-
     window.setInterval(() => {
         context.clearRect(0, 0, canvas.width, canvas.height);
         snake1.update();
@@ -30,7 +36,7 @@ var obstacle_theme = 'goal';
         }
 
         if (snake1.eat(snack) || snake2.eat(snack)) {
-            snack.newLocation(obstacles);
+            snack.newLocation();
         }
 
         obstacles.forEach(element => {
@@ -51,30 +57,29 @@ window.addEventListener('keydown', ((event) => {
 }))
 
 function resetGame(){
-        snake1.x = getRandomInt(5, 35) * grid;
-        snake1.y = getRandomInt(5, 35) * grid;
-        snake1.cells = [];
-        snake1.maxCells = 4;
-        snake1.dx = grid;
-        snake1.dy = 0;
-        snake1.direction = 'rechts';
-        snake1.dead = false;
+    snake1.x = getRandomInt(5, 35) * grid;
+    snake1.y = getRandomInt(5, 35) * grid;
+    snake1.cells = [];
+    snake1.maxCells = 4;
+    snake1.dx = grid;
+    snake1.dy = 0;
+    snake1.direction = 'rechts';
+    snake1.dead = false;
 
-        snake2.x = getRandomInt(5, 35) * grid;
-        snake2.y = getRandomInt(5, 35) * grid;
-        snake2.cells = [];
-        snake2.maxCells = 4;
-        snake2.dx = grid;
-        snake2.dy = 0;
-        snake2.direction = 'rechts';
-        snake2.dead = false;
-
-    snack.x = getRandomInt(0, 39) * grid;
-    snack.y = getRandomInt(0, 39) * grid;
+    snake2.x = getRandomInt(5, 35) * grid;
+    snake2.y = getRandomInt(5, 35) * grid;
+    snake2.cells = [];
+    snake2.maxCells = 4;
+    snake2.dx = grid;
+    snake2.dy = 0;
+    snake2.direction = 'rechts';
+    snake2.dead = false;
  
-    obstacles.forEach(element => {
-        element.newLocation();
+    obstacles.forEach(obstacle => {
+        obstacle.newLocation();
     });
+
+    snack.newLocation();
 }
 
 function getRandomInt(min, max) {

@@ -8,12 +8,13 @@ function Snake(player, color){
     this.direction = 'rechts';
     this.dead = false;
 
-
     this.draw = function(){
         this.cells.forEach(function(cell, index) {
             if(index != 0){
+                context.beginPath();
+                context.arc(cell.x+(grid/2), cell.y+(grid/2), grid/2, 0, 2*Math.PI);
                 context.fillStyle = color;
-                context.fillRect(cell.x, cell.y, grid-1, grid-1);
+                context.fill();
             }
         })
         img = new Image();
@@ -46,38 +47,27 @@ function Snake(player, color){
                 this.cells.pop();
             }
 
-            this.cells.forEach(function(cell, index) {
+            snake1.cells.forEach(function(cell, index) {
+                if(snake2.x == cell.x && snake2.y == cell.y){
+                    snake2.dead = true;
+                }
+
                 for (var i=index+1; i<snake1.cells.length; i++) {
                     if(cell.x === snake1.cells[i].x && cell.y == snake1.cells[i].y) {
                         snake1.dead = true;
                     }
                 }
+            });
 
+            snake2.cells.forEach(function(cell, index) {
+                if(snake1.x == cell.x && snake1.y == cell.y){
+                    snake1.dead = true;
+                }
                 for (var i=index+1; i<snake2.cells.length; i++) {
                     if(cell.x === snake2.cells[i].x && cell.y == snake2.cells[i].y) {
                         snake2.dead = true;
                     }
                 }
-            });
-
-            snake1.cells.forEach(function(cell, index) {
-                neues_x = cell.x;
-                neues_y = cell.y;
-                    snake2.cells.forEach(function(cell, index) {
-                        if(index == 0 && neues_x == cell.x && neues_y == cell.y){
-                            snake2.dead = true;
-                        }
-                    });
-            });
-
-            snake2.cells.forEach(function(cell, index) {
-                neues_x = cell.x;
-                neues_y = cell.y;
-                    snake1.cells.forEach(function(cell, index) {
-                        if(index == 0 && neues_x == cell.x && neues_y == cell.y){
-                            snake1.dead = true;
-                        }
-                    });
             });
         }
     }
@@ -144,6 +134,25 @@ function Snake(player, color){
            (this.x == obstacle.x + grid && this.y == obstacle.y + grid)){
                this.dead = true;
            }
+    }
+
+    this.checkSpawnOnObstacle = function(){
+        let coordinates = [];
+
+        for(var i=0; i<obstacles.length; i++){
+            coordinates.push([obstacles[i].x, obstacles[i].y]);
+            coordinates.push([obstacles[i].x+grid, obstacles[i].y]);
+            coordinates.push([obstacles[i].x, obstacles[i].y+grid]);
+            coordinates.push([obstacles[i].x+grid, obstacles[i].y+grid]);
+        }
+
+        let not_in_coordinates = subtractFromArray(all_coordinates, coordinates);
+
+        let new_pos = not_in_coordinates[Math.floor(Math.random() * not_in_coordinates.length)];
+        console.log(this.x);
+        this.x = new_pos[0];
+        this.y = new_pos[1];
+        console.log(this.x);
     }
 
     function getRandomInt(min, max) {
