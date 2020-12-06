@@ -138,25 +138,6 @@ function Snake(player, color){
         }
     }
 
-    this.checkSpawnOnObstacle = function(){
-        let coordinates = [];
-
-        for(var i=0; i<obstacles.length; i++){
-            coordinates.push([obstacles[i].x, obstacles[i].y]);
-            coordinates.push([obstacles[i].x+grid, obstacles[i].y]);
-            coordinates.push([obstacles[i].x, obstacles[i].y+grid]);
-            coordinates.push([obstacles[i].x+grid, obstacles[i].y+grid]);
-        }
-
-        let not_in_coordinates = subtractFromArray(all_coordinates, coordinates);
-
-        let new_pos = not_in_coordinates[Math.floor(Math.random() * not_in_coordinates.length)];
-        console.log(this.x);
-        this.x = new_pos[0];
-        this.y = new_pos[1];
-        console.log(this.x);
-    }
-
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
