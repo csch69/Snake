@@ -2,21 +2,30 @@ const canvas = document.getElementById('game');
 const context = canvas.getContext("2d");
 const grid = 20;
 
+let world = localStorage.getItem('w');
+let game = document.getElementById('game');
+game.style.backgroundImage = "url('images/worlds/" + world + ".png')";
+game.style.backgroundSize = "contain";
+
+document.getElementById('p1_name').innerHTML = getPlayer1Name();
+document.getElementById('p2_name').innerHTML = getPlayer2Name();
+
+
+
 var all_coordinates = [];
+
 for(let j=20; j<800; j+=20){
     for(let k=20; k<800; k+=20){
         all_coordinates.push([j,k]);
     }
 }
 
-getWorld();
-
-
 var obstacles = [];
 for(var i=0; i<40; ++i){
-    obstacles[i] = new Obstacle('goal');
+    obstacles[i] = new Obstacle(world);
 }
-var snack = new Snack('ball');
+
+var snack = new Snack(world);
 var snake1 = new Snake(1, 'red');
 var snake2 = new Snake(2, 'yellow');
 
@@ -53,9 +62,9 @@ setInterval(() => {
 
         if(snake1.dead == true && snake2.dead == true){
             if(snake1.maxCells > snake2.maxCells){
-                setHighscore(getPlayer1Name, snake1.maxCells);
+                setHighscore(getPlayer1Name(), snake1.maxCells - 4);
             }else{
-                setHighscore(getPlayer2Name, snake2.maxCells);
+                setHighscore(getPlayer2Name(), snake2.maxCells - 4);
             }
             resetGame();
         }
@@ -93,7 +102,6 @@ function resetGame(){
     });
 
     timer = 0;
-
     snack.newLocation();
 }
 
@@ -109,9 +117,8 @@ function getPlayer2Name(){
     return localStorage.getItem('p2');
 }
 
-//prüft ob eine Neuer Highscore vorhandem ist
 function setHighscore(pname, winnerScore) {
-    nh = false;
+    newHighscore = false;
     if (localStorage.getItem('highscore') == null) {
         localStorage.setItem('highscore', 'OLI:160;ALFRED:50;Peter:30;DIETMAR:10;ACEL:5')
     }
@@ -128,36 +135,19 @@ function setHighscore(pname, winnerScore) {
         if (winnerScore > parseInt(element)) {
             nameScore[4][1] = winnerScore;
             nameScore[4][0] = pname;
-            nh = true;
+            newHighscore = true;
             break;
         }
     }
-    if (nh == true) {
+    if (newHighscore == true) {
         nameScore = nameScore.sort(function (a, b) {
             return b[1] - a[1];
         });
-        console.log(nameScore);
+
         var rueckgabe = "";
         for (let j = 0; j < 5; j++) {
             rueckgabe += nameScore[j][0] + ':' + nameScore[j][1] + ';';
         }
-        setElem('highscore', rueckgabe);
-        console.log(nameScore, rueckgabe);
+        localStorage.setItem('highscore', rueckgabe);
     }
 }
-
-function getWorld(){
-    let world = localStorage.getItem('w');
-
-    switch (world) {
-        case 'classic':
-            break;
-        case 'soccer':
-            break;
-        case 'space':
-            break;
-        default:
-            break;
-    }
-}
-

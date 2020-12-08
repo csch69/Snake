@@ -1,10 +1,11 @@
-function Snack(theme) {
+function Snack(world) {
+    this.theme = getTheme(world);
     this.x  = getRandomInt(1, 39) * grid;
     this.y  = getRandomInt(1, 39) * grid;
 
     this.draw = function(){
         img = new Image();
-        img.src = 'images/snacks/' + theme + '.png';
+        img.src = 'images/snacks/' + this.theme + '.png';
         context.drawImage(img, this.x, this.y, grid, grid);
     }
 
@@ -18,6 +19,25 @@ function Snack(theme) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
+    function getTheme(world){
+        let theme;
+        switch (world) {
+            case 'classic':
+                theme = 'apple'; 
+                break;
+            case 'football':
+                theme = 'ball';
+                break;
+            case 'space':
+                theme = 'alien';
+                break;
+            default:
+                theme = 'ball';
+                break;
+        }
+        return theme;
+    }
+
     this.checkSpawnOnObstacle = function(){
         let coordinates = [];
 
@@ -29,8 +49,8 @@ function Snack(theme) {
         }
 
         let not_in_coordinates = subtractFromArray(all_coordinates, coordinates);
-
         let new_pos = not_in_coordinates[Math.floor(Math.random() * not_in_coordinates.length)];
+
         this.x = new_pos[0];
         this.y = new_pos[1]
     }

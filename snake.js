@@ -125,6 +125,11 @@ function Snake(player, color){
             this.maxCells++;
             return true;
         }
+        if(player == 1){
+            document.getElementById('p1_score').innerHTML = this.maxCells - 4;
+        }else{
+            document.getElementById('p2_score').innerHTML = this.maxCells - 4;
+        }
         return false;
     }
 
