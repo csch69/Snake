@@ -1,40 +1,154 @@
-<!DOCTYPE html>
 <html>
+
 <head>
-  <title>Snake</title>
-  <meta charset="UTF-8">
-  <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
-  body {
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  canvas {
-    border: 1px solid white;
-  }
-  </style>
+    <title>Snake Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: black;
+            font-family: monospace;
+            align-items: center;
+            align-self: center;
+            color: white;
+            text-align: center;
+            align-self: center;
+        }
+        .text{
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%; 
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
 
 <body>
-  <div display="grid">
-  <div id="gameinfo" class="infotext">
-    <div id="snake1score" display="inline-block" style="color: white;">Hubi: 5 Punkte</div><br>
-    <div id="snake2score" display="inline-block" style="color: white;">Schucki: 10 Punkte</div>
-  </div>
-  <div>
-    <canvas width="800" height="800" id="game" style="background: url('./images/fields/football.png'); background-size: contain;"></canvas>
-  </div>
-  </div>
-</body> 
+    <div class="text">
+    <h1>Snake</h1>
+    <p>Wähle die Spielernamen!</p>
+    <form action="">
+        <div>
+            Spieler1:
+            <input type="text" name="player1Input" id="player1Input">
+        </div>
+        <div>
+            Spieler2:
+            <input type="text" name="player2Input" id="player2Input">
+        </div>
+        <div>
+            <label>Welt:
+                <select class="worldSelect" name="world" id="world">
+                    <option value="">Select One …</option>
+                    <option value="classic">Classic</option>
+                    <option value="sardine">Soccer</option>
+                    <option value="vanilla">Space</option>
+                </select>
+            </label>
+        </div>
+    </form>
+    <div class="">
+        Highscoreliste
+        <div id="one">One:</div>
+        <div id="two">Two:</div>
+        <div id="three">Three:</div>
+        <div id="four">Four:</div>
+        <div id="five">Five:</div>
+    </div>
+    <button id='startGame'>Neues Spiel</button>
+</div>
+    <script>
+        //Spielernamen setzen 
+        const p1 = document.getElementById('player1Input');
+        const p2 = document.getElementById('player2Input');
 
-<script type="text/javascript" src="snack.js"></script>
-<script type="text/javascript" src="snake.js"></script>
-<script type="text/javascript" src="obstacle.js"></script>
-<script type="text/javascript" src="draw.js"></script>
+        p1.addEventListener('change', (event) => {
+            setElem('p1', event.target.value);
+            console.log(getElem('p1'));
+        });
+        p2.addEventListener('change', (event) => {
+            setElem('p2', event.target.value);
+            console.log(getElem('p2'));
+        });
+        //Weltauswahl speichern
+        const world = document.getElementById('world');
+        world.addEventListener('change', (event) => {
+            setElem('w', event.target.value);
+        });
+        //Highscoreliste JS
+        var scores = showHighscore();
+        document.getElementById('one').innerHTML = scores[0];
+        document.getElementById('two').innerHTML = scores[1];
+        document.getElementById('three').innerHTML = scores[2];
+        document.getElementById('four').innerHTML = scores[3];
+        document.getElementById('five').innerHTML = scores[4];
+        //Ein und auslesen der highscoreliste
+        //Starten Spiel
+        document.getElementById('startGame').addEventListener('click', () => {
+            window.document.location.replace('game.html');
+        });
+        //setzen die Werte in die Local Storage    
+        function getElem(elemName) {
+            if ((value = localStorage.getItem(elemName)) == null) {
+                localStorage.setItem(elemName, '0')
+                return 0;
+            } else {
+                return value;
+            }
+        }
+        function setElem(elemName, value) {
+            localStorage.setItem(elemName, value);
+        }
+
+        function showHighscore() {
+            const score = localStorage.getItem('highscore').split(';')
+            return score;
+        }
+
+        //prüft ob eine Neuer Highscore vorhandem ist
+        function setHighscore(pname, winnerScore) {
+            nh = false;
+            if (localStorage.getItem('highscore') == null) {
+                localStorage.setItem('highscore', 'OLI:160;ALFRED:50;Peter:30;DIETMAR:10;ACEL:5')
+            }
+            const score = localStorage.getItem('highscore').split(';')
+            var nameScore = [
+                score[0].split(':'),
+                score[1].split(':'),
+                score[2].split(':'),
+                score[3].split(':'),
+                score[4].split(':'),
+            ];
+            for (let i = 0; i < 5; i++) {
+                var element = nameScore[i][1];
+                if (winnerScore > parseInt(element)) {
+                    nameScore[4][1] = winnerScore;
+                    nameScore[4][0] = pname;
+                    nh = true;
+                    break;
+                }
+            }
+            if (nh == true) {
+                nameScore = nameScore.sort(function (a, b) {
+                    return b[1] - a[1];
+                });
+                console.log(nameScore);
+                var rueckgabe = "";
+                for (let j = 0; j < 5; j++) {
+                    rueckgabe += nameScore[j][0] + ':' + nameScore[j][1] + ';';
+                }
+                setElem('highscore', rueckgabe);
+                console.log(nameScore, rueckgabe);
+            }
+        }
+    </script>
+</body>
 
 </html>

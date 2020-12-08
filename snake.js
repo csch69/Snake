@@ -15,6 +15,7 @@ function Snake(player, color){
                 context.arc(cell.x+(grid/2), cell.y+(grid/2), grid/2, 0, 2*Math.PI);
                 context.fillStyle = color;
                 context.fill();
+                context.stroke();
             }
         })
         img = new Image();
