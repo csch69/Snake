@@ -1,7 +1,7 @@
 const canvas = document.getElementById('game');
 const context = canvas.getContext("2d");
 const grid = 20;
-
+var winner;
 let world = localStorage.getItem('w');
 let game = document.getElementById('game');
 game.style.backgroundImage = "url('images/worlds/" + world + ".png')";
@@ -41,7 +41,7 @@ setInterval(() => {
         context.clearRect(0, 0, canvas.width, canvas.height);
         snake1.update();
         snake2.update();
-
+        
         snake1.draw();
         snake2.draw();
         snack.draw();
@@ -63,19 +63,62 @@ setInterval(() => {
         if(snake1.dead == true && snake2.dead == true){
             if(snake1.maxCells > snake2.maxCells){
                 setHighscore(getPlayer1Name(), snake1.maxCells - 4);
+                endGame('p1',snake1.maxCells - 4);
             }else{
                 setHighscore(getPlayer2Name(), snake2.maxCells - 4);
+                endGame('p2',snake2.maxCells - 4);
+
             }
-            resetGame();
+            //Hier kommt meine Funktion hinein
+            
         }
     }, 80)
 }());
+
 
 window.addEventListener('keydown', ((event) => {
     const direction = event.key.replace('Arrow', '');
     snake1.changeDirection(direction);
     snake2.changeDirection(direction);
 }))
+
+function endGame(winner,winnerScore){
+    //Anzeige EndScore
+    context.font = "50px ComicSans";
+    context.fillStyle = "#D1EDF2";
+    context.textAlign  = "center"
+    context.fillText( localStorage.getItem(winner) + "  " +winnerScore, canvas.width/2,canvas.height/2);
+    //Anzeigen Knopf1
+    //context.fillStyle = "#D1EDF2";
+    //context.fillRect(canvas.width/2-100, 6*canvas.height/10+50, 200, -50);
+    //SchriftnKnopf 1
+    context.font = "30px ComicSans";
+    context.fillStyle = "FFFFFF";
+    context.fillText("New Game", 6*canvas.width/10, 6*canvas.height/10);
+    //Schrift Knopf 2
+    context.font = "30px ComicSans";
+    context.fillStyle = "FFFFFF";
+    context.fillText("Main Menu", 4*canvas.width/10, 6*canvas.height/10);
+    //Prüft welcher Knopf gedrückt wurde
+    window.addEventListener("mousedown",event=>{
+        console.log(event.offsetX, event.offsetY)
+        console.log(4*canvas.width/10,4*canvas.width/10 + 200,6*canvas.height/10,6*canvas.height/10+50)
+            if(6*canvas.width/10-100<= event.offsetX &&  event.offsetX <=  6*canvas.width/10 + 100 &&6*canvas.height/10 >= event.offsetY &&   6*canvas.height/10-50 <= event.offsetY){
+                resetGame();
+            }else if(4*canvas.width/10-100<= event.offsetX &&  event.offsetX <=  4*canvas.width/10 + 100 &&6*canvas.height/10 >= event.offsetY &&   6*canvas.height/10-50 <= event.offsetY){
+                window.document.location.replace('index.html');
+            }
+    });
+}
+
+function isclicked(cxpos,cypos) //needs the coordiantes of the cick  event x and y 
+{
+    //if(this.xpos<= cxpos &&  cxpos <= this.xpos+ this.mwidth && this.ypos<= cypos &&  cypos <= this.ypos+this.mheight){
+      //  return true;
+    //}else{
+      //  return false;
+    //}
+}
 
 function resetGame(){
     snake1.x = getRandomInt(5, 35) * grid;
