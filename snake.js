@@ -32,6 +32,7 @@ function Snake(player, color){
             this.x += this.dx;
             this.y += this.dy;
 
+            //wrap around corner
             if(this.x < 0) {
                 this.x = canvas.width - grid;
             }
@@ -51,7 +52,8 @@ function Snake(player, color){
             if(this.cells.length > this.maxCells) {
                 this.cells.pop();
             }
-
+            
+            //snake dead
             snake1.cells.forEach(function(cell, index) {
                 if(snake2.x == cell.x && snake2.y == cell.y){
                     snake2.dead = true;

@@ -10,8 +10,6 @@ game.style.backgroundSize = "contain";
 document.getElementById('p1_name').innerHTML = getPlayer1Name();
 document.getElementById('p2_name').innerHTML = getPlayer2Name();
 
-
-
 var all_coordinates = [];
 
 for(let j=20; j<800; j+=20){
@@ -34,7 +32,7 @@ snack.checkSpawnOnObstacle();
 var timer = 0;
 setInterval(() => {
     if(timer < obstacles.length) timer++;
-},2500);
+},3000);
 
 (function setup() {
     window.setInterval(() => {
