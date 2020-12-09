@@ -13,7 +13,11 @@ function Snake(player, color){
             if(index != 0){
                 context.beginPath();
                 context.arc(cell.x+(grid/2), cell.y+(grid/2), grid/2, 0, 2*Math.PI);
-                context.fillStyle = color;
+                if(player == 1){
+                    context.fillStyle = '#FF2A2AFF';
+                }else{
+                    context.fillStyle = '#FFD42AFF';
+                }
                 context.fill();
                 context.stroke();
             }
