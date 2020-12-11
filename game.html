@@ -3,32 +3,41 @@
 <head>
   <title>Snake</title>
   <meta charset="UTF-8">
+  
   <style>
-  html, body {
+  /*html, body {
     height: 100%;
     margin: 0;
-  }
+  }*/
   body {
     background: black;
-    display: flex;
-    align-items: center;
     justify-content: center;
+    display: grid;
+    align-items: center;
   }
   canvas {
     border: 1px solid white;
   }
+  
+  .wrapper{
+    display: grid;
+    grid-template-columns:  2fr 2fr 2fr 2fr ;
+    text-align: center;
+    font-size: x-large;
+  }
   </style>
 </head>
 
-<body>
-    <div id="p1_name" display="inline-block" style="color: white;">player1</div>
-    <div id="p2_name" display="inline-block" style="color: white;">player2</div>
-    <div id="p1_score" display="inline-block" style="color: white;">player1_score</div>
-    <div id="p2_score" display="inline-block" style="color: white;">player2_score</div>
-  <div>
+<body >
+  <div class="wrapper">
+    <div id="p1_name" style="color: white;">player1</div>
+    <div id="p1_score"  style="color: white;">player1_score</div>
+    <div id="p2_name" style="color: white;">player1</div>
+    <div id="p2_score"  style="color: white;">player1_score</div>
+  </div> 
     <canvas width="800" height="800" id="game"></canvas>
-  </div>
-  </div>
+</div>
+
 </body> 
 
 <script type="text/javascript" src="snack.js"></script>

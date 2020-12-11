@@ -27,42 +27,42 @@
             left: 50%; 
             transform: translate(-50%, -50%);
         }
+
     </style>
 </head>
 
 <body>
     <div class="text">
-    <h1>Snake</h1>
-    <p>Wähle die Spielernamen!</p>
-    <form action="">
-        <div>
-            Spieler1:
-            <input type="text" name="player1Input" id="player1Input">
+    <h1 style="margin: 1em;">Snake</h1>
+    <h3 style="margin: 1em;">Spieleinstellungen</h3>
+    <form action="" style="margin: 1em;">
+        <div style="margin: 1em;">
+            Spieler 1:
+            <input type="text" name="player1Input" id="player1Input" placeholder="Spieler 1">
         </div>
-        <div>
-            Spieler2:
-            <input type="text" name="player2Input" id="player2Input">
+        <div style="margin: 1em;">
+            Spieler 2:
+            <input type="text" name="player2Input" id="player2Input" placeholder="Spieler 2">
         </div>
-        <div>
+        <div style="margin: 1em;">
             <label>Welt:
                 <select class="worldSelect" name="world" id="world">
-                    <option value="">Select One …</option>
-                    <option value="classic">Classic</option>
-                    <option value="football">Soccer</option>
-                    <option value="space">Space</option>
+                    <option value="classic">Klassik</option>
+                    <option value="football">Fußball</option>
+                    <option value="space">Weltall</option>
                 </select>
             </label>
         </div>
     </form>
-    <div class="">
-        Highscoreliste
+    <div class="" style="margin: 1em;">
+        <h3>Highscore</h3>
         <div id="one">One:</div>
         <div id="two">Two:</div>
         <div id="three">Three:</div>
         <div id="four">Four:</div>
         <div id="five">Five:</div>
     </div>
-    <button id='startGame'>Neues Spiel</button>
+    <button id='startGame' style="margin: 1em;">Neues Spiel</button>
 </div>
     <script>
         //Spielernamen setzen 
@@ -92,6 +92,18 @@
         //Ein und auslesen der highscoreliste
         //Starten Spiel
         document.getElementById('startGame').addEventListener('click', () => {
+            if(localStorage.getItem('p1')==null){
+                setElem('p1','Spieler 1');
+            }
+            if(localStorage.getItem('p2')==null){
+                setElem('p2','Spieler 2');
+            }
+            if(localStorage.getItem('p1') != document.getElementById('player1Input').value){
+                setElem('p1','Spieler 1');
+            }
+            if(localStorage.getItem('p2') !=document.getElementById('player2Input').value){
+                setElem('p2','Spieler 2');
+            }
             window.document.location.replace('game.html');
         });
         //setzen die Werte in die Local Storage    
@@ -116,7 +128,7 @@
         function setHighscore(pname, winnerScore) {
             nh = false;
             if (localStorage.getItem('highscore') == null) {
-                localStorage.setItem('highscore', 'OLI:160;ALFRED:50;Peter:30;DIETMAR:10;ACEL:5')
+                localStorage.setItem('highscore', 'Oli:40;Alfred:39;Peter:30;Dietmar:10;Tilman:5')
             }
             const score = localStorage.getItem('highscore').split(';')
             var nameScore = [
