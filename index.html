@@ -93,16 +93,16 @@
         //Starten Spiel
         document.getElementById('startGame').addEventListener('click', () => {
             if(localStorage.getItem('p1')==null){
-                setElem('p1','Spieler 1');
+                setElem('p1','Spieler1');
             }
             if(localStorage.getItem('p2')==null){
-                setElem('p2','Spieler 2');
+                setElem('p2','Spieler2');
             }
             if(localStorage.getItem('p1') != document.getElementById('player1Input').value){
-                setElem('p1','Spieler 1');
+                setElem('p1','Spieler1');
             }
             if(localStorage.getItem('p2') !=document.getElementById('player2Input').value){
-                setElem('p2','Spieler 2');
+                setElem('p2','Spieler2');
             }
             window.document.location.replace('game.html');
         });

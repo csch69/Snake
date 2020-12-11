@@ -92,11 +92,11 @@ function endGame(winner,winnerScore){
     //SchriftnKnopf 1
     context.font = "30px ComicSans";
     context.fillStyle = "FFFFFF";
-    context.fillText("New Game", 6*canvas.width/10, 6*canvas.height/10);
+    context.fillText("Neues Spiel", 6*canvas.width/10, 6*canvas.height/10);
     //Schrift Knopf 2
     context.font = "30px ComicSans";
     context.fillStyle = "FFFFFF";
-    context.fillText("Main Menu", 4*canvas.width/10, 6*canvas.height/10);
+    context.fillText("Hauptmenü", 4*canvas.width/10, 6*canvas.height/10);
     //Prüft welcher Knopf gedrückt wurde
     window.addEventListener("mousedown",event=>{
         console.log(event.offsetX, event.offsetY)
